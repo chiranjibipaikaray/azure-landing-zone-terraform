@@ -1,0 +1,48 @@
+name: Terraform CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      # Step 3: Terraform Format check
+      - name: Terraform fmt
+        run: terraform fmt -check
+
+      # Step 4: Terraform Init
+      - name: Terraform Init
+        working-directory: ./environments/dev   # Change to dev/stage/prod as needed
+        run: terraform init
+
+      # Step 5: Terraform Validate
+      - name: Terraform Validate
+        working-directory: ./environments/dev
+        run: terraform validate
+
+      # Step 6: Terraform Plan
+      - name: Terraform Plan
+        working-directory: ./environments/dev
+        run: terraform plan -var-file="terraform.tfvars"
