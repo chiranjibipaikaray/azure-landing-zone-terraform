@@ -5,7 +5,7 @@ resource "azurerm_storage_account" "storage" {
   location                 = each.value.location
   account_tier             = "Standard"
   account_replication_type = each.value.account_replication_type
-
+  account_kind = each.value.account_kind
   tags = {
   environment = "generic"
   project     = "landing-zone"

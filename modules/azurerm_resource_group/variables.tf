@@ -1,4 +1,10 @@
 variable "rg_var" {
-  type = map(any
+
+  type = map(object
+    (
+      { name = string
+      location = string }
+    )
   )
+
 }
