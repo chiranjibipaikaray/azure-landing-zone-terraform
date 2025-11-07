@@ -1,13 +1,29 @@
+
+# ----------------------------
+# Virtual Network + Subnets
+# ----------------------------
 resource "azurerm_virtual_network" "vnet" {
-  for_each            = var.var_vnet
-  name                = each.value.vnet_name
+  for_each = var.vnets
+
+  name                = each.value.name
+  address_space       = each.value.address_space
   location            = each.value.location
   resource_group_name = each.value.resource_group_name
-  address_space       = each.value.address_space
-  dns_servers         = each.value.dns_servers
 
-  tags = {
-    environment = "generic"
-    project     = "landing-zone"
+  tags = each.value.tags
+
+# ----------------------------
+# Subnets inside each VNet
+# ----------------------------
+ dynamic "subnet" {
+    for_each = try(each.value.subnets, {}) != null ? try(each.value.subnets, {}) : {}
+    content {
+      name           = subnet.value.name
+      address_prefixes = subnet.value.address_prefix
+    }
   }
 }
+
+# ----------------------------
+#subnet
+ 
